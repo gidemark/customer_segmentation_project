@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Spark / JVM
+*.log
+derby.log
+metastore_db/
+spark-warehouse/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Generated outputs (regenerable by running the pipeline)
+data/processed/
+models/
+outputs/*.csv
+outputs/*.png
+report/*.md
+report/*.pdf
