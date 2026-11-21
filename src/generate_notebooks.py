@@ -1,4 +1,4 @@
-"""Generate the 5 Jupyter notebooks for the customer segmentation project."""
+"""Generate the Jupyter notebooks for the customer segmentation project."""
 import os
 import nbformat as nbf
 
@@ -7,7 +7,6 @@ SRC = os.path.join(BASE, "src")
 NOTEBOOKS = os.path.join(BASE, "notebooks")
 os.makedirs(NOTEBOOKS, exist_ok=True)
 
-# Common header prepended to every notebook
 HEADER = """# Customer Segmentation at Scale Using Spark
 # Jupyter notebook wrapper for the weekly pipeline scripts.
 # Run cells in order. Each notebook loads the outputs of the previous week.
@@ -60,12 +59,9 @@ make_notebook("Week 3 - Clustering with MLlib (KMeans)",
               "03_clustering_model.py",
               "Trains KMeans for k=2..8, evaluates with silhouette (Elbow method), "
               "selects the optimal K, saves the model, and assigns cluster labels.")
-make_notebook("Week 4 - Cluster Interpretation & Business Strategy",
+make_notebook("Week 4 - Cluster Interpretation, Visualizations & Business Strategy",
               "04_cluster_analysis.py",
               "Profiles each cluster, assigns business names (High-Value Loyal, "
-              "Churn Risk, etc.), and writes the final segment table.")
-make_notebook("Week 4 supplement - Visualizations",
-              "05_visualization.py",
-              "Generates PNG charts (elbow plot, cluster size, RFM profile, revenue "
-              "share) for the final report.")
+              "Churn Risk, etc.), generates the report charts, and writes the "
+              "final segment table.")
 print("Done.")
