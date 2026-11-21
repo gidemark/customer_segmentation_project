@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from spark_env import create_spark_session
 from csv_util import write_single_csv
 
-from pyspark.sql.functions import col, log1p
+from pyspark.sql.functions import col, log1p, exp
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.regression import LinearRegression
 from pyspark.ml.evaluation import RegressionEvaluator
@@ -28,8 +28,9 @@ df = spark.read.parquet(os.path.join(PROCESSED, "rfm_features.parquet"))
 # 2. Target: future Monetary ~ log1p(Monetary) proxy using available features
 # Use LogMonetary as target proxy (future spend) regressed on other features.
 feature_cols = ["Recency", "Frequency", "LogAvgBasket", "ProductDiversity", "LogTotalQty"]
-assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
-data = assembler.transform(df).select("Customer ID", "features", col("LogMonetary").alias("label"))
+assembler = VectorAssembler(inputCols=feature_cols, outputCol="features_vec")
+data = assembler.transform(df).select("Customer ID", "features_vec", col("LogMonetary").alias("label"))
+data = data.withColumnRenamed("features_vec", "features")
 
 # 3. Train/test split
 train, test = data.randomSplit([0.8, 0.2], seed=42)
@@ -46,7 +47,7 @@ print(f"RMSE: {rmse:.4f}  R2: {r2:.4f}")
 
 # 6. Predict for all customers
 all_preds = model.transform(data).select("Customer ID", "prediction")
-all_preds = all_preds.withColumn("PredictedFutureMonetary", (col("prediction").exp() - 1))
+all_preds = all_preds.withColumn("PredictedFutureMonetary", (exp(col("prediction")) - 1))
 all_preds.select("Customer ID", "PredictedFutureMonetary").show(10, truncate=False)
 
 write_single_csv(
